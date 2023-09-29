@@ -23,4 +23,4 @@ def parseFile (file) :
 
 # Resoltion du problème 
 x,y = parseFile(file)
-greedy.glouton(x,y)
+print(greedy.glouton(x,y))
