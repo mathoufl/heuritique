@@ -5,7 +5,7 @@ import random as rd
 
 
 # Dans ce TP tout est fait sur la mémoire centrale et les listes x et y sont modifiées en place pour un gain d'efficacité !
-filePath = "./instances/tsp10.txt"
+filePath = "./instances/tsp1.txt"
 file = open(filePath)
 
 
@@ -41,7 +41,7 @@ def findClosest (ind : int, iter = False):
         if i != ind : 
             dist = distance(ind, i)
             if dist < min_dist :
-                min = dist
+                min_dist = dist
                 res = i
     return (res, min_dist)
 
@@ -54,7 +54,7 @@ def swap(ind1 : int, ind2 : int) :
 def glouton () :
     chrono_init = time.time()
     dist = 0
-    randomiseFirstItem(True)
+    randomiseFirstItem(False)
     for i in range(l-1):
         closest,distToAdd = findClosest(i, True)
         swap(i+1, closest)
@@ -78,5 +78,3 @@ naiveTestListe = [[1, 2, 15, 6], [10, 3, 7, 1]]
 # Resoltion du problème 
 x,y,l = parseFile(file)
 print(glouton())
-print(x)
-print(y)
