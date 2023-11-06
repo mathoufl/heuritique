@@ -5,7 +5,7 @@ import random as rd
 
 
 # Dans ce TP tout est fait sur la mémoire centrale et les listes x et y sont modifiées en place pour un gain d'efficacité !
-filePath = "./instances/tsp1.txt"
+filePath = "instances/tsp1.txt"
 file = open(filePath)
 
 
