@@ -13,6 +13,7 @@ genetic_max_itérations = 100
 genetic_invariant = 5
 genetic_survivor_number = 4
 genetic_max_point_selector = 250
+genetic_selection_criteria = 1
 
 # Dans le fichier que l'on utilise on a deux colones chaqu'unes représentant un x et un y
 def parseFile (file) :
@@ -35,6 +36,6 @@ x_test, y_test = [1,10,8,11,5,18,16],[22,6,14,7,4,1,10]
 print(greedy.glouton(x, y, isDebug)) # résultat sans seed: 29444 en 0.9s
 
 ## Runing genetic algorythme
-print(genetic.genetic(x, y, genetic_population_size, genetic_max_itérations, genetic_invariant, genetic_survivor_number, genetic_max_point_selector, isDebug)) # résultat :  
+print(genetic.genetic(x, y, genetic_population_size, genetic_max_itérations, genetic_invariant, genetic_survivor_number, genetic_max_point_selector, genetic_selection_criteria, isDebug)) # résultat :  
 
 print ("done")

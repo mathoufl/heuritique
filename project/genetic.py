@@ -4,7 +4,7 @@ import util
 import greedy
 
 # Mise en place de l'algo genetic 
-def genetic (x: list, y: list, population_size: int, max_itérations: int, stable_iteration: int, survivor_number: int, chromosome_max_size: int, isDebug: bool = False) :
+def genetic (x: list, y: list, population_size: int, max_itérations: int, stable_iteration: int, survivor_number: int, chromosome_max_size: int, selection_criteria: int, isDebug: bool = False) :
     chrono  = time.time()
     # on génére plusieurs individues de la population (ici ce sera plusieurs configurations generées par des greedys avec des seed différents)
     population = init_population(x, y, population_size-1, isDebug) # prend 23 secondes&
@@ -15,7 +15,7 @@ def genetic (x: list, y: list, population_size: int, max_itérations: int, stabl
         survivors = select_bests(population, survivor_number)
         new_population = breed(survivors, population_size, chromosome_max_size)
         # new_population = mutate(new_population)
-        population = generation_clash(population, new_population)
+        population = generation_clash(population, new_population, survivor_number, selection_criteria)
         population_best.append(select_best(population))
     chrono = time.time() - chrono
     return(population_best, chrono)
@@ -45,7 +45,7 @@ def select_bests(population: list, survivor_number: int) :
     return [population[bests[b][0]] for b in range(len(bests))]
 
 def select_best(population) :
-    return max(population, key=lambda x: x[2])
+    return min(population, key=lambda x: x[2])
 
 def breed(population, objectif, chromosome_max_size) :
     children_number = objectif - len(population)
@@ -60,25 +60,31 @@ def breed(population, objectif, chromosome_max_size) :
 def mating(father, mother, chromosome_max_size) :
     isNot_possible_chromosom_set = True
     while isNot_possible_chromosom_set :
+
         cfi = rd.randint(0,len(father[0])-chromosome_max_size)
         cfs = rd.randint(0,chromosome_max_size)
         chromosome_father = [father[0][cfi:cfi+cfs],father[1][cfi:cfi+cfs]]
+
         cmi = rd.randint(0,len(mother[0])-chromosome_max_size)
         cms = rd.randint(0,chromosome_max_size)
         chromosome_mother = [mother[0][cmi:cmi+cms],father[1][cmi:cmi+cms]]
+
         isNot_possible_chromosom_set = adn_test(chromosome_father, chromosome_mother)
+
     child = [[chromosome_father[0][i], chromosome_father[1][i]] for i in range(len(chromosome_father[0]))] + [[chromosome_mother[0][i], chromosome_mother[1][i]] for i in range(len(chromosome_mother[0]))]
+
     formated_father = [[father[0][i], father[1][i]] for i in range(len(father[0]))]
     child += [elem for elem in formated_father if elem not in child]
     child = [[c[0] for c in child],[c[1] for c in child]]
+
     child = greedy.glouton(child[0], child[1], False, False, cms+cfs)
     child.append(util.calc_distance_tot(child[0], child[1]))
     return(child)
 
 def adn_test(chromosome_father, chromosome_mother) :
     isNotCompatible = False
-    for i in range(len(chromosome_father)-1):
-        for j in range(len(chromosome_mother)-1):
+    for i in range(len(chromosome_father[0])-1):
+        for j in range(len(chromosome_mother[0])-1):
             if chromosome_father[0][i] == chromosome_mother[0][j] and chromosome_father[1][i] == chromosome_mother[1][j]:
                 isNotCompatible = True
     return(isNotCompatible)
@@ -87,8 +93,12 @@ def adn_test(chromosome_father, chromosome_mother) :
 def mutate(population) :
     print("mutate")
 
-def generation_clash(old_population, new_population):
-    if select_best(old_population)[2] > select_best(new_population)[2] :
+def generation_clash(old_population, new_population, survivor_number, bests_criteria: int = 0):
+    if bests_criteria : 
+        criteria = sum(select_bests(old_population, survivor_number)[i][2] for i in range(survivor_number)) > sum(select_bests(new_population, survivor_number)[i][2] for i in range(survivor_number))
+    else : 
+        criteria = select_best(old_population)[2] > select_best(new_population)[2]
+    if criteria :
         return old_population
     else :
         return new_population
